@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+#  db:
+#    image: postgres
+  geth:
+    image: shyft_geth:latest
+#    build: .
+    environment:
+      ## - INITALL=true
+      - FIRSTINIT=true
+    command: /usr/local/bin/init_all.sh
+#    volumes:
+#      - .:/code
+    ports:
+      - "8545:8545"
+      - "30301:30301"
+#    depends_on:
+#      - db
