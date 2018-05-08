@@ -1,4 +1,4 @@
-FROM shyft_geth:latest
+FROM shyftnetwork/shyft_go-ethereum:latest 
 
 RUN mkdir /build && mkdir /build/bin && mv /usr/local/bin/geth /build/bin/
 

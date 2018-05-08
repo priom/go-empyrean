@@ -2,15 +2,19 @@
 
 ## Docker
 
+`docker-compose up shyft_geth_init`
+
+###Building docker images
+
 To build base geth image:
 
 This is the normal geth image, we may want to just modify this image but I'm not sure.
 
-`docker build . -t shyft_geth`
+`docker build . -t shyftnetwork/shyft_go-ethereum`
 
 Then, build Dockerfile.shyft:
 
-`docker build -f Dockerfile.shyft . -t shyft_geth_init`
+`docker build -f Dockerfile.shyft . -t shyftnetwork/shyft_go-ethereum_init_script`
 
 To test this image, run:
 
