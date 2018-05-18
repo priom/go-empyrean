@@ -143,6 +143,8 @@ type BlockChain struct {
 // Processor.
 func NewBlockChain(db ethdb.Database, blockExplorerDb *sql.DB, cacheConfig *CacheConfig, chainConfig *params.ChainConfig, engine consensus.Engine, vmConfig vm.Config) (*BlockChain, error) {
     fmt.Printf("+++++++++++++++++core/blockchain.GO+++++++++++++++++++++++++NewBlockChain()")
+	fmt.Println(vmConfig.Debug)
+
 	if cacheConfig == nil {
 		cacheConfig = &CacheConfig{
 			TrieNodeLimit: 256 * 1024 * 1024,

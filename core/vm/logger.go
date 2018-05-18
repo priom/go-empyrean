@@ -124,6 +124,7 @@ func NewStructLogger(cfg *LogConfig) *StructLogger {
 }
 
 func (l *StructLogger) CaptureStart(from common.Address, to common.Address, create bool, input []byte, gas uint64, value *big.Int) error {
+	fmt.Println("DO WE REACH HERE?")
 	return nil
 }
 
@@ -131,6 +132,8 @@ func (l *StructLogger) CaptureStart(from common.Address, to common.Address, crea
 //
 // CaptureState also tracks SSTORE ops to track dirty values.
 func (l *StructLogger) CaptureState(env *EVM, pc uint64, op OpCode, gas, cost uint64, memory *Memory, stack *Stack, contract *Contract, depth int, err error) error {
+	fmt.Println("how bout here?")
+
 	// check if already accumulated the specified number of logs
 	if l.cfg.Limit != 0 && l.cfg.Limit <= len(l.logs) {
 		return ErrTraceLimitReached

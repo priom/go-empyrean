@@ -27,6 +27,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/params"
+	"fmt"
 )
 
 // Config is a basic type specifying certain configuration flags for running
@@ -95,6 +96,7 @@ func setDefaults(cfg *Config) {
 // the given code. It enabled the JIT by default and make sure that it's restored
 // to it's original state afterwards.
 func Execute(code, input []byte, cfg *Config) ([]byte, *state.StateDB, error) {
+	fmt.Println("IN Execute function")
 	if cfg == nil {
 		cfg = new(Config)
 	}
@@ -156,6 +158,7 @@ func Create(input []byte, cfg *Config) ([]byte, common.Address, uint64, error) {
 // Call, unlike Execute, requires a config and also requires the State field to
 // be set.
 func Call(address common.Address, input []byte, cfg *Config) ([]byte, uint64, error) {
+	fmt.Println("IN the call function")
 	setDefaults(cfg)
 
 	vmenv := NewEnv(cfg)
