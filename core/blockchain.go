@@ -142,7 +142,6 @@ type BlockChain struct {
 // available in the database. It initialises the default Ethereum Validator and
 // Processor.
 func NewBlockChain(db ethdb.Database, blockExplorerDb *sql.DB, cacheConfig *CacheConfig, chainConfig *params.ChainConfig, engine consensus.Engine, vmConfig vm.Config) (*BlockChain, error) {
-    fmt.Printf("+++++++++++++++++core/blockchain.GO+++++++++++++++++++++++++NewBlockChain()")
 	if cacheConfig == nil {
 		cacheConfig = &CacheConfig{
 			TrieNodeLimit: 256 * 1024 * 1024,
@@ -908,7 +907,7 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 		return NonStatTy, err
 	}
 	// @NOTE:SHYFT - Write block data for block explorer
-	if err := shyftdb.WriteBlock(bc.blockExplorerDb, block, receipts); err != nil {
+	if err := shyftdb.WriteBlock(bc.blockExplorerDb, state, block, receipts); err != nil {
 		return NonStatTy, err
 	}
 

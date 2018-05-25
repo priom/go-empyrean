@@ -6,6 +6,7 @@ import (
 	"math/big"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/core/state"
 	"time"
 	"strconv"
 	"database/sql"
@@ -104,7 +105,7 @@ type SendAndReceive struct {
 }
 
 //WriteBlock writes to block info to sql db
-func WriteBlock(sqldb *sql.DB, block *types.Block, receipts []*types.Receipt) error {
+func WriteBlock(sqldb *sql.DB, stateDB *state.StateDB, block *types.Block, receipts []*types.Receipt) error {
 	rewards := WriteMinerRewards(sqldb,block)
 	coinbase := block.Header().Coinbase.String()
 	number := block.Header().Number.String()
@@ -132,11 +133,34 @@ func WriteBlock(sqldb *sql.DB, block *types.Block, receipts []*types.Receipt) er
 
 	if block.Transactions().Len() > 0 {
 		for _, tx := range block.Transactions() {
+
 			WriteTransactions(sqldb, tx, block.Header().Hash(), block.Header().Number.String(), receipts, age, gasLimit)
 			if block.Transactions()[0].To() != nil {
 				WriteFromBalance(sqldb, tx)
+				res := stateDB.StorageTrie(*tx.From())
+				stateObj := stateDB.GetOrNewStateObject(*tx.To())
+				stateObjBalance := stateObj.Balance().String()
+				stateObjAddress := stateObj.Address().String()
+
+				const CLR_Y = "\x1b[33;1m"
+				fmt.Println("\x1b[33;1mNormal TX STATE OBJECT ADDRESS ::", stateObjAddress)
+				fmt.Println("Normal TX CONTRACT FROM ADDRESS::", tx.To().String())
+				fmt.Println("Normal TX STATE OBJECT BALANCE ::", stateObjBalance)
+				fmt.Println("Normal TX ROOT HASH            ::", block.Root().String())
+				fmt.Println("Normal TX STORAGE TRIE HASH    ::", res.Hash().String())
 			}
 			if block.Transactions()[0].To() == nil {
+				res := stateDB.StorageTrie(*tx.From())
+				stateObj := stateDB.GetOrNewStateObject(*tx.From())
+				stateObjBalance := stateObj.Balance().String()
+				stateObjAddress := stateObj.Address().String()
+
+				const CLR_B = "\x1b[34;1m"
+				fmt.Println("\x1b[34;1mSTATE OBJECT ADDRESS ::", stateObjAddress)
+				fmt.Println("CONTRACT FROM ADDRESS::", tx.From().String())
+				fmt.Println("STATE OBJECT BALANCE ::", stateObjBalance)
+				fmt.Println("ROOT HASH            ::", block.Root().String())
+				fmt.Println("STORAGE TRIE HASH    ::", res.Hash().String())
 				WriteContractBalance(sqldb, tx)
 				WriteContractsTxHashReferences(sqldb, tx)
 			}
