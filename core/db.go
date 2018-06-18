@@ -1,8 +1,8 @@
-package shyftdb
+package core
 
 import (
-  	"fmt"
-  	"database/sql"
+	"fmt"
+	"database/sql"
 )
 
 var blockExplorerDb *sql.DB
