@@ -14,7 +14,6 @@ _ "github.com/lib/pq"
 	"github.com/ethereum/go-ethereum/core/types"
 	Rewards "github.com/ethereum/go-ethereum/consensus/ethash"
 	"github.com/ethereum/go-ethereum/shyfttracerinterface"
-	"reflect"
 )
 
 var IShyftTracer shyfttracerinterface.IShyftTracer
@@ -175,11 +174,9 @@ func SwriteTransactions(sqldb *sql.DB, tx *types.Transaction, blockHash common.H
 	}
 
 	hash := txData.TxHash
-	fmt.Println(reflect.TypeOf(hash))
 	txHash := txData.TxHash.Hex()
 
-	//prayer, _ := IShyftTracer.GetTracerToRun(hash)
-	//fmt.Printf("%+v\n", prayer)
+	IShyftTracer.GetTracerToRun(hash)
 
 	//var stack *node.Node
 	//var cfg *eth.Config
@@ -306,7 +303,7 @@ func writeContractBalanceHelper(sqldb *sql.DB, tx *types.Transaction) (SendAndRe
 	}
 
 	fromAddr := sendAndReceiveData.From
-	getAccountBalanceSender:= GetAccount(sqldb, fromAddr)
+	getAccountBalanceSender:= SGetAccount(sqldb, fromAddr)
 
 	var senderBalance SendAndReceive
 	if err := json.Unmarshal([]byte(getAccountBalanceSender), &senderBalance); err != nil {
@@ -404,8 +401,8 @@ func writeBalanceHelper(sqldb *sql.DB, tx *types.Transaction) (SendAndReceive, s
 	toAddr := sendAndReceiveData.To
 	fromAddr := sendAndReceiveData.From
 
-	getAccountBalanceReceiver := GetAccount(sqldb, toAddr)
-	getAccountBalanceSender:= GetAccount(sqldb, fromAddr)
+	getAccountBalanceReceiver := SGetAccount(sqldb, toAddr)
+	getAccountBalanceSender:= SGetAccount(sqldb, fromAddr)
 
 	var receiverBalance SendAndReceive
 	if err := json.Unmarshal([]byte(getAccountBalanceReceiver), &receiverBalance); err != nil {
@@ -521,7 +518,7 @@ func storeReward(sqldb *sql.DB, address string, reward *big.Int) {
 // Getters
 //////////
 //GetAllBlocks returns []SBlock blocks for API
-func GetAllBlocks(sqldb *sql.DB) string {
+func SGetAllBlocks(sqldb *sql.DB) string {
 	var arr blockRes
 	var blockArr string
 	rows, err := sqldb.Query(`
@@ -642,7 +639,7 @@ func SGetBlock(sqldb *sql.DB, blockNumber string) string {
 	return string(json)
 }
 
-func GetRecentBlock(sqldb *sql.DB) string {
+func SGetRecentBlock(sqldb *sql.DB) string {
 	sqlStatement := `SELECT * FROM blocks WHERE number=(SELECT MAX(number) FROM blocks);`
 	row := sqldb.QueryRow(sqlStatement)
 	var hash string
@@ -695,7 +692,7 @@ func GetRecentBlock(sqldb *sql.DB) string {
 	return string(json)
 }
 
-func GetAllTransactionsFromBlock(sqldb *sql.DB, blockNumber string) string {
+func SGetAllTransactionsFromBlock(sqldb *sql.DB, blockNumber string) string {
 	var arr txRes
 	var txx string
 	sqlStatement := `SELECT * FROM txs WHERE blocknumber=$1`
@@ -763,7 +760,7 @@ func GetAllTransactionsFromBlock(sqldb *sql.DB, blockNumber string) string {
 	return txx
 }
 
-func GetAllBlocksMinedByAddress(sqldb *sql.DB, coinbase string) string {
+func SGetAllBlocksMinedByAddress(sqldb *sql.DB, coinbase string) string {
 	var arr blockRes
 	var blockArr string
 	sqlStatement := `SELECT * FROM blocks WHERE coinbase=$1`
@@ -830,7 +827,7 @@ func GetAllBlocksMinedByAddress(sqldb *sql.DB, coinbase string) string {
 }
 
 //GetAllTransactions getter fn for API
-func GetAllTransactions(sqldb *sql.DB) string {
+func SGetAllTransactions(sqldb *sql.DB) string {
 	var arr txRes
 	var txx string
 	rows, err := sqldb.Query(`
@@ -957,7 +954,7 @@ func SGetTransaction(sqldb *sql.DB, txHash string) string {
 }
 
 //GetAccount returns account balances
-func GetAccount(sqldb *sql.DB, address string) string {
+func SGetAccount(sqldb *sql.DB, address string) string {
 	sqlStatement := `SELECT * FROM accounts WHERE addr=$1;`
 	row := sqldb.QueryRow(sqlStatement, address)
 	var addr string
@@ -978,7 +975,7 @@ func GetAccount(sqldb *sql.DB, address string) string {
 }
 
 //GetAllAccounts returns all accounts and balances
-func GetAllAccounts(sqldb *sql.DB) string {
+func SGetAllAccounts(sqldb *sql.DB) string {
 	var array accountRes
 	var accountsArr string
 	var txCountAccount string
@@ -1017,7 +1014,7 @@ func GetAllAccounts(sqldb *sql.DB) string {
 }
 
 //GetAccount returns account balances
-func GetAccountTxs(sqldb *sql.DB, address string) string {
+func SGetAccountTxs(sqldb *sql.DB, address string) string {
 	var arr txRes
 	var txx string
 	sqlStatement := `SELECT * FROM txs WHERE to_addr=$1 OR from_addr=$1;`
