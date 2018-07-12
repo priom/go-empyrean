@@ -1,4 +1,6 @@
+DROP TABLE internalTxs;
 DROP TABLE txs;
 DROP TABLE blocks;
 DROP TABLE accounts;
 DROP TABLE contracts;
+
