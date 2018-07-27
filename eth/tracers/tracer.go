@@ -33,6 +33,8 @@ import (
 	"github.com/ShyftNetwork/go-empyrean/log"
 	"gopkg.in/olebedev/go-duktape.v3"
 	"strconv"
+	"reflect"
+	"github.com/ShyftNetwork/go-empyrean/rlp"
 )
 
 // bigIntegerJS is the minified version of https://github.com/peterolson/BigInteger.js.
@@ -615,7 +617,19 @@ func (i *Internals) SWriteInteralTxs(hash common.Hash) {
 		Output:    i.Output,
 		Time:      i.Time,
 	}
+	//fmt.Println("[CONTRACT INPUT]",i.Input)
 
+	inp, _ := hexutil.Decode(i.Input)
+	count,_ := rlp.CountValues(inp)
+	fmt.Println(count)
+	//test := rlp.DecodeBytes(inp, &testy)
+	//fmt.Println("?????????????", test)
+	//fmt.Println("[BYTE ARRAY OF INPUT]",inp)
+	//n := bytes.IndexByte(inp, 0)
+	//s := string(inp[:n])
+	//fmt.Println("[STRING INPUT]", s)
+
+	fmt.Println(reflect.TypeOf(i.Input))
 	//@TODO WRITE OVER TRANSACTION STRUCT
 	core.SWriteInternalTxBalances(sqldb, i.To, i.From, amount)
 	core.InsertInternalTx(sqldb, iTx)
